@@ -19,9 +19,9 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: tgfcfixtures
-        path: ~/tgfcfixtures/tgfcfixtures/target/release/tgfxfixtures
+        path: ~/tgfcfixtures/target/release/tgfxfixtures
     - uses: actions/upload-artifact@v3
       with:
         name: default.template
-        path: ~/tgfcfixtures/tgfcfixtures/default.template
-    
+        path: ~/tgfcfixtures/default.template
+
