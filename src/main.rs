@@ -96,6 +96,8 @@ fn main() {
                     (Some("the"), _) |
                     (Some("mt"), _) |
                     (Some("st"), _) |
+                    (Some("north"), _) |
+                    (Some("south"), _) |
                     (Some("brisbane"), _) |
                     (Some("western"), _) |
                     (Some("ipswich"), _) => 1,
