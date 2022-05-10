@@ -1,0 +1,11 @@
+[package]
+name = "tgfcfixtures"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tera = "1"
+csv = "1.1"
+time = { version = "0.3", features = [ "parsing", "serde", "formatting" ] }
+serde = "1"
+serde_derive = "1"
