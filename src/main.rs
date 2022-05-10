@@ -3,7 +3,7 @@ use std::{env, fs};
 use std::collections::HashMap;
 use time::{Date, Time, format_description};
 
-const VERSION: &str = "0.01";
+const VERSION: &str = "0.02";
 
 #[derive(Debug, Serialize)]
 struct Fixture {
