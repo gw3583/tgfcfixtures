@@ -19,7 +19,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: tgfcfixtures
-        path: ${{ github.workspace }}/target/release/tgfxfixtures
+        path: ${{ github.workspace }}/target/release/tgfcfixtures
     - uses: actions/upload-artifact@v3
       with:
         name: default.template
