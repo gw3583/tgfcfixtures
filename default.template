@@ -1,3 +1,10 @@
+{% set_global filters =
+    [
+        " U14 Div 2 North",
+        " U15 Div 2 North",
+    ]
+%}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,7 +37,7 @@
                 {%- for fixture in date.fixtures %}
                 <tr class="bg-white border-b border-gray-200">
                     <th scope="row" class="pl-2 py-2 text-left">{{ fixture.competition }}</th>
-                    <td class="td-logo {{ fixture.class }}">{{ fixture.opponent }}</td>
+                    <td class="td-logo {{ fixture.class }}">{{ strip(in=fixture.opponent, filter=filters) }}</td>
                     <td>{{ fixture.time }}</td>
                 </tr>
                 {%- endfor %}

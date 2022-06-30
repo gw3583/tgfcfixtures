@@ -3,7 +3,7 @@ use std::{env, fs};
 use std::collections::HashMap;
 use time::{Date, Time, format_description};
 
-const VERSION: &str = "0.03";
+const VERSION: &str = "0.04";
 
 #[derive(Debug, Serialize)]
 struct Fixture {
@@ -27,6 +27,31 @@ struct Location {
     days: Vec<Day>,
 }
 
+fn tera_strip(args: &HashMap<String, tera::Value>) -> tera::Result<tera::Value> {
+    let input = args
+        .get("in")
+        .expect("bug: no in variable supplied")
+        .as_str()
+        .expect("in variable is not a string");
+
+    let filters: Vec<String> = args
+        .get("filter")
+        .expect("bug: no filter variable supplied")
+        .as_array()
+        .expect("bug: filter must be an array")
+        .iter()
+        .map(|s| s.as_str().expect("bug: filter is not a string").to_string())
+        .collect();
+
+    let mut output = input.to_string();
+
+    for filter in &filters {
+        output = output.replace(filter, "");
+    }
+
+    Ok(tera::Value::String(output))
+}
+
 fn main() {
     println!("TGFC Fixtures v{}", VERSION);
 
@@ -38,6 +63,10 @@ fn main() {
         let output_path = &args[3];
 
         println!("Loading template '{}'", template_path);
+        let mut tera = tera::Tera::new("templates/*").expect("unable to create tera");
+
+        tera.register_function("strip", tera_strip);
+
         let template_data = fs::read_to_string(template_path)
             .expect(&format!("Unable to load template {}", template_path));
 
@@ -80,7 +109,7 @@ fn main() {
 
                 let expected_time_format = format_description::parse("[hour repr:12]:[minute]:[second] [period]").unwrap();
                 let time = Time::parse(time, &expected_time_format).expect("unable to parse time");
-                let wanted_time_format = format_description::parse("[hour repr:12]:[minute] [period]").unwrap();
+                let wanted_time_format = format_description::parse("[hour padding:none repr:12]:[minute] [period]").unwrap();
                 let time_string = time.format(&wanted_time_format).expect("unable to format time");
 
                 let opponent_words: Vec<String> = opponent
@@ -151,7 +180,7 @@ fn main() {
             for (date, mut fixtures) in days {
                 fixtures.sort_by_key(|fixture| fixture.sort_key);
 
-                let wanted_date_format = format_description::parse("[weekday] [day] [month]").unwrap();
+                let wanted_date_format = format_description::parse("[weekday] [day padding:none] [month repr:long]").unwrap();
                 let date_string = date.format(&wanted_date_format).expect("unable to format date");
 
                 let day = Day {
@@ -173,10 +202,9 @@ fn main() {
         let mut context = tera::Context::new();
         context.insert("locations", &locations);
 
-        let output = match tera::Tera::one_off(
+        let output = match tera.render_str(
             &template_data,
             &context,
-            true,
         ) {
             Ok(output) => output,
             Err(err) => {
